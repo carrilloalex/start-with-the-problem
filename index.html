@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Start with the Problem</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --black: #0a0a0a;
+  --off-white: #f5f5f0;
+  --mid: #6b6b68;
+  --light: #b8b8b4;
+  --green: #1a7a4a;
+  --green-pale: #e8f5ee;
+  --red: #c0392b;
+  --red-pale: #fdecea;
+  --border: rgba(10,10,10,0.08);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: #fff;
+  color: var(--black);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ─── NAV ─── */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 99;
+  height: 52px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 48px;
+  background: rgba(255,255,255,0.88);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 0.5px solid var(--border);
+}
+.nav-title {
+  font-size: 12px; font-weight: 500; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--mid);
+}
+.nav-dots { display: flex; gap: 7px; align-items: center; }
+.dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--border); cursor: pointer;
+  transition: all 0.3s cubic-bezier(.4,0,.2,1);
+}
+.dot.on { background: var(--black); width: 16px; border-radius: 2.5px; }
+
+/* ─── PROGRESS ─── */
+#bar {
+  position: fixed; top: 0; left: 0; height: 2px;
+  background: var(--green); width: 0%;
+  z-index: 200; transition: width 0.06s linear;
+}
+
+/* ─── SHARED SECTION SHELL ─── */
+section {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 96px 48px 64px;
+  position: relative;
+}
+
+.inner { width: 100%; max-width: 860px; }
+.inner-sm { width: 100%; max-width: 620px; }
+.inner-lg { width: 100%; max-width: 1040px; }
+
+/* ─── SCREEN 1: HOOK ─── */
+#s1 { background: #fff; }
+
+.s1-kicker {
+  font-size: 11px; font-weight: 500; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--green);
+  margin-bottom: 28px;
+}
+
+.s1-headline {
+  font-size: clamp(52px, 8vw, 88px);
+  font-weight: 300; line-height: 1.05;
+  letter-spacing: -0.03em; color: var(--black);
+  margin-bottom: 56px;
+}
+.s1-headline em { font-style: italic; font-weight: 300; }
+
+.s1-quotes {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 40px;
+}
+
+.s1-quote {
+  background: var(--off-white);
+  border-radius: 14px;
+  padding: 24px;
+  opacity: 0; transform: translateY(16px);
+  transition: opacity 0.5s, transform 0.5s;
+}
+.s1-quote.in { opacity: 1; transform: none; }
+
+.s1-quote-mark {
+  font-size: 28px; line-height: 1; color: var(--light);
+  font-family: Georgia, serif; margin-bottom: 10px;
+  display: block;
+}
+.s1-quote-text {
+  font-size: 15px; line-height: 1.6;
+  color: var(--mid); font-weight: 400;
+}
+
+.s1-punchline {
+  font-size: 17px; font-weight: 400; color: var(--mid);
+  line-height: 1.65; max-width: 520px;
+}
+.s1-punchline strong { color: var(--black); font-weight: 500; }
+
+/* ─── SCREEN 2: REFRAME ─── */
+#s2 { background: var(--off-white); }
+
+.s2-kicker {
+  font-size: 11px; font-weight: 500; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--mid);
+  margin-bottom: 28px;
+}
+
+.s2-headline {
+  font-size: clamp(36px, 5vw, 56px);
+  font-weight: 300; line-height: 1.1;
+  letter-spacing: -0.025em; color: var(--black);
+  margin-bottom: 52px;
+}
+
+.doctor-split {
+  display: grid;
+  grid-template-columns: 1fr 48px 1fr;
+  gap: 0;
+  align-items: stretch;
+  margin-bottom: 48px;
+}
+
+.patient-panel {
+  border-radius: 18px;
+  padding: 32px;
+  display: flex; flex-direction: column;
+}
+.patient-panel.a {
+  background: var(--red-pale);
+  border: 1px solid rgba(192,57,43,0.1);
+}
+.patient-panel.b {
+  background: var(--green-pale);
+  border: 1px solid rgba(26,122,74,0.12);
+}
+
+.patient-label {
+  font-size: 10px; font-weight: 500; letter-spacing: 0.14em;
+  text-transform: uppercase; margin-bottom: 16px;
+}
+.patient-panel.a .patient-label { color: var(--red); }
+.patient-panel.b .patient-label { color: var(--green); }
+
+.patient-speech {
+  font-size: 17px; line-height: 1.65;
+  font-style: italic; font-weight: 300;
+  flex: 1;
+}
+.patient-panel.a .patient-speech { color: #7a2018; }
+.patient-panel.b .patient-speech { color: #0f4a2a; }
+
+.vs-divider {
+  display: flex; align-items: center; justify-content: center;
+}
+.vs-text {
+  font-size: 13px; font-weight: 500; color: var(--light);
+  letter-spacing: 0.04em;
+}
+
+.s2-insight {
+  font-size: 19px; font-weight: 300; line-height: 1.65;
+  color: var(--mid); max-width: 640px;
+  letter-spacing: -0.01em;
+}
+.s2-insight strong { color: var(--black); font-weight: 500; }
+
+/* ─── SCREEN 3: 3 QUESTIONS ─── */
+#s3 { background: #fff; }
+
+.s3-kicker {
+  font-size: 11px; font-weight: 500; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--green);
+  margin-bottom: 28px;
+}
+
+.s3-headline {
+  font-size: clamp(36px, 5vw, 52px);
+  font-weight: 300; line-height: 1.1;
+  letter-spacing: -0.025em; color: var(--black);
+  margin-bottom: 64px;
+}
+
+.questions {
+  display: flex; flex-direction: column; gap: 0;
+}
+
+.question {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 0;
+  padding: 40px 0;
+  border-top: 0.5px solid var(--border);
+  opacity: 0; transform: translateY(12px);
+  transition: opacity 0.5s, transform 0.5s;
+}
+.question:last-child { border-bottom: 0.5px solid var(--border); }
+.question.in { opacity: 1; transform: none; }
+
+.q-number {
+  font-size: 13px; font-weight: 500; color: var(--light);
+  letter-spacing: 0.04em; padding-top: 4px;
+}
+
+.q-right {}
+
+.q-title {
+  font-size: 24px; font-weight: 400;
+  letter-spacing: -0.02em; color: var(--black);
+  margin-bottom: 12px; line-height: 1.2;
+}
+
+.q-body {
+  font-size: 16px; font-weight: 300; line-height: 1.7;
+  color: var(--mid); margin-bottom: 16px;
+}
+
+.q-example {
+  display: flex; flex-direction: column; gap: 8px;
+  margin-top: 16px;
+}
+
+.qe {
+  display: flex; align-items: flex-start; gap: 12px;
+  font-size: 14px; line-height: 1.6; font-weight: 400;
+  padding: 14px 16px; border-radius: 10px;
+}
+.qe.bad { background: var(--red-pale); color: #7a2018; }
+.qe.good { background: var(--green-pale); color: #0f4a2a; }
+
+.qe-icon { font-size: 12px; flex-shrink: 0; margin-top: 2px; font-weight: 600; }
+.qe.bad .qe-icon { color: var(--red); }
+.qe.good .qe-icon { color: var(--green); }
+
+.q-prompt {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--off-white); border-radius: 20px;
+  padding: 6px 14px; font-size: 13px;
+  color: var(--mid); font-weight: 400;
+  margin-top: 12px;
+}
+.q-prompt-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+
+/* ─── SCREEN 4: FILTER ─── */
+#s4 { background: var(--off-white); }
+
+.s4-kicker {
+  font-size: 11px; font-weight: 500; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--mid);
+  margin-bottom: 28px;
+}
+
+.s4-headline {
+  font-size: clamp(36px, 5vw, 52px);
+  font-weight: 300; line-height: 1.1;
+  letter-spacing: -0.025em; color: var(--black);
+  margin-bottom: 16px;
+}
+
+.s4-sub {
+  font-size: 17px; font-weight: 300; color: var(--mid);
+  margin-bottom: 52px; line-height: 1.6;
+}
+
+/* The key question — hero treatment */
+.key-question-wrap {
+  background: var(--black); border-radius: 20px;
+  padding: 48px 52px; margin-bottom: 32px;
+}
+.key-question-label {
+  font-size: 11px; font-weight: 500; letter-spacing: 0.12em;
+  text-transform: uppercase; color: rgba(255,255,255,0.35);
+  margin-bottom: 20px;
+}
+.key-question {
+  font-size: clamp(22px, 3vw, 30px);
+  font-weight: 300; line-height: 1.4;
+  color: white; letter-spacing: -0.02em;
+  margin-bottom: 36px;
+}
+
+.answer-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+}
+.answer-card {
+  border-radius: 12px; padding: 20px 22px;
+}
+.answer-card.auto-card { background: rgba(192,57,43,0.12); }
+.answer-card.ai-card { background: rgba(26,122,74,0.15); }
+
+.answer-tag {
+  font-size: 10px; font-weight: 600; letter-spacing: 0.1em;
+  text-transform: uppercase; margin-bottom: 8px;
+}
+.auto-card .answer-tag { color: #ff8a6e; }
+.ai-card .answer-tag { color: #5de09a; }
+
+.answer-text {
+  font-size: 14px; line-height: 1.6; font-weight: 300;
+  color: rgba(255,255,255,0.72);
+}
+
+/* Examples table — clean rows */
+.examples {
+  display: flex; flex-direction: column; gap: 0;
+  border: 0.5px solid var(--border); border-radius: 14px;
+  overflow: hidden;
+}
+
+.example-row {
+  display: grid; grid-template-columns: 1fr 140px;
+  gap: 0; padding: 18px 24px;
+  border-bottom: 0.5px solid var(--border);
+  align-items: center;
+}
+.example-row:last-child { border-bottom: none; }
+.example-row.divider { background: var(--off-white); padding: 4px 24px; }
+
+.ex-task { font-size: 15px; color: var(--black); font-weight: 400; line-height: 1.4; }
+.ex-right { display: flex; align-items: center; justify-content: flex-end; gap: 10px; }
+
+.chip {
+  font-size: 11px; font-weight: 500; letter-spacing: 0.04em;
+  padding: 4px 10px; border-radius: 6px;
+}
+.chip.auto { background: var(--red-pale); color: var(--red); }
+.chip.ai { background: var(--green-pale); color: var(--green); }
+
+.ex-note { font-size: 12px; color: var(--light); font-style: italic; }
+
+/* ─── SCREEN 5: TEMPLATE ─── */
+#s5 { background: #fff; }
+
+.s5-kicker {
+  font-size: 11px; font-weight: 500; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--green);
+  margin-bottom: 28px;
+}
+
+.s5-headline {
+  font-size: clamp(36px, 5vw, 52px);
+  font-weight: 300; line-height: 1.1;
+  letter-spacing: -0.025em; color: var(--black);
+  margin-bottom: 48px;
+}
+
+.template-wrap {
+  background: var(--black); border-radius: 20px;
+  padding: 40px 44px; margin-bottom: 32px;
+  position: relative; overflow: hidden;
+}
+.template-wrap::after {
+  content: '';
+  position: absolute; top: 0; left: 0;
+  width: 3px; height: 100%; background: var(--green);
+}
+
+.prompt-block {
+  display: flex; flex-direction: column; gap: 24px;
+}
+.prompt-q {
+  font-size: 17px; font-weight: 500;
+  color: white; letter-spacing: -0.01em;
+  margin-bottom: 8px;
+}
+.prompt-a {
+  font-size: 15px; font-weight: 300;
+  color: var(--green-mid); font-style: italic;
+  line-height: 1.6; letter-spacing: -0.005em;
+}
+
+.template-sentence {
+  font-size: clamp(18px, 2.5vw, 22px);
+  font-weight: 300; line-height: 2;
+  color: rgba(255,255,255,0.75);
+  letter-spacing: -0.01em;
+}
+.blank {
+  color: var(--green); font-style: italic;
+  border-bottom: 1px dashed rgba(26,122,74,0.5);
+}
+
+.example-wrap {
+  background: var(--off-white);
+  border-radius: 14px; padding: 28px 32px;
+  margin-bottom: 32px;
+}
+.example-label {
+  font-size: 10px; font-weight: 500; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--green); margin-bottom: 12px;
+}
+.example-text {
+  font-size: 16px; font-style: italic; font-weight: 300;
+  line-height: 1.75; color: var(--mid);
+}
+
+.s5-cta {
+  font-size: 18px; font-weight: 300; line-height: 1.7;
+  color: var(--mid); letter-spacing: -0.01em;
+}
+.s5-cta strong { color: var(--black); font-weight: 500; }
+
+/* ─── SCREEN 6: CLOSE ─── */
+#s6 { background: var(--black); min-height: 80vh; }
+
+.s6-inner { text-align: center; }
+
+.s6-kicker {
+  font-size: 11px; font-weight: 500; letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+  margin-bottom: 32px;
+}
+
+.s6-headline {
+  font-size: clamp(44px, 7vw, 80px);
+  font-weight: 300; line-height: 1.08;
+  letter-spacing: -0.03em; color: #fff;
+  margin-bottom: 32px;
+}
+.s6-headline em { font-style: italic; }
+
+.s6-divider {
+  width: 1px; height: 48px;
+  background: rgba(255,255,255,0.12);
+  margin: 0 auto 32px;
+}
+
+.s6-sub {
+  font-size: 18px; font-weight: 300; line-height: 1.75;
+  color: rgba(255,255,255,0.45); max-width: 480px;
+  margin: 0 auto 40px; letter-spacing: -0.01em;
+}
+
+.s6-final {
+  font-size: clamp(20px, 3vw, 28px);
+  font-style: italic; font-weight: 300;
+  color: rgba(255,255,255,0.6);
+  letter-spacing: -0.02em; line-height: 1.5;
+}
+
+/* ─── SCROLL CUE ─── */
+.cue {
+  position: absolute; bottom: 32px; left: 50%;
+  transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  color: var(--light); cursor: pointer;
+  animation: nudge 2.4s ease-in-out infinite;
+}
+.cue-label { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 400; }
+@keyframes nudge { 0%,100%{transform:translateX(-50%) translateY(0)} 55%{transform:translateX(-50%) translateY(6px)} }
+
+@media(max-width:680px){
+  section{ padding:80px 24px 48px; }
+  .nav{ padding:0 24px; }
+  .s1-quotes{ grid-template-columns:1fr; }
+  .doctor-split{ grid-template-columns:1fr; }
+  .vs-divider{ display:none; }
+  .answer-row{ grid-template-columns:1fr; }
+  .question{ grid-template-columns:1fr; }
+  .q-number{ display:none; }
+}
+</style>
+</head>
+<body>
+
+<div id="bar"></div>
+
+<nav class="nav">
+  <span class="nav-title">Start with the Problem</span>
+  <div class="nav-dots" id="dots">
+    <div class="dot on" data-i="0"></div>
+    <div class="dot" data-i="1"></div>
+    <div class="dot" data-i="2"></div>
+    <div class="dot" data-i="3"></div>
+    <div class="dot" data-i="4"></div>
+    <div class="dot" data-i="5"></div>
+  </div>
+</nav>
+
+
+<!-- ══ 1: HOOK ══ -->
+<section id="s1">
+  <div class="inner">
+    <p class="s1-kicker">A guide for everyone thinking about AI at work</p>
+    <h1 class="s1-headline">Start with<br>the <em>problem.</em></h1>
+
+    <div class="s1-quotes">
+      <div class="s1-quote" style="transition-delay:.0s">
+        <span class="s1-quote-mark">"</span>
+        <p class="s1-quote-text">Can we use AI to summarise our weekly reports?</p>
+      </div>
+      <div class="s1-quote" style="transition-delay:.12s">
+        <span class="s1-quote-mark">"</span>
+        <p class="s1-quote-text">I saw Claude do this in 30 seconds — why are we still doing it manually?</p>
+      </div>
+      <div class="s1-quote" style="transition-delay:.24s">
+        <span class="s1-quote-mark">"</span>
+        <p class="s1-quote-text">Our competitors are using AI for everything. We're falling behind.</p>
+      </div>
+    </div>
+
+    <p class="s1-punchline">These are all reasonable instincts.<br><strong>But the best results come from getting clear on what we're trying to fix first.</strong></p>
+  </div>
+  <div class="cue" onclick="document.getElementById('s2').scrollIntoView({behavior:'smooth'})">
+    <svg width="16" height="10" viewBox="0 0 16 10" fill="none"><path d="M1 1l7 7 7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+</section>
+
+
+<!-- ══ 2: DOCTOR ══ -->
+<section id="s2">
+  <div class="inner">
+    <p class="s2-kicker">Think of it like going to the doctor</p>
+    <h2 class="s2-headline">Two patients walk<br>into a doctor's office.</h2>
+
+    <div class="doctor-split">
+      <div class="patient-panel a">
+        <p class="patient-label">Patient A</p>
+        <p class="patient-speech">"I need an MRI, some antibiotics, and probably surgery on my left knee."</p>
+      </div>
+      <div class="vs-divider"><span class="vs-text">vs</span></div>
+      <div class="patient-panel b">
+        <p class="patient-label">Patient B</p>
+        <p class="patient-speech">"I've had a dull pain in my leg for three weeks. It gets worse on stairs. I can't run anymore."</p>
+      </div>
+    </div>
+
+    <p class="s2-insight">A doctor never prescribes before diagnosing. They ask questions, understand the pain, then decide what to do. The clearer the description of what's wrong, the better the help, whatever shape that help takes.</p>
+  </div>
+</section>
+
+
+<!-- ══ 3: 3 QUESTIONS ══ -->
+<section id="s3">
+  <div class="inner">
+    <p class="s3-kicker">Before you mention any tool</p>
+    <h2 class="s3-headline">Three questions<br>that matter.</h2>
+
+    <div class="questions">
+
+      <div class="question">
+        <span class="q-number">01</span>
+        <div class="q-right">
+          <h3 class="q-title">What is the actual pain?</h3>
+          <p class="q-body">When someone arrives with an idea for what to build, the most useful thing is to step back and describe what's going wrong in the first place.</p>
+          <div class="q-example">
+            <div class="qe bad"><span class="qe-icon">✕</span><span>"We need a way to summarise meetings faster"</span></div>
+            <div class="qe good"><span class="qe-icon">✓</span><span>"Tell me more — who's doing the summarising now, when does it slow them down, and what would 'faster' actually mean for them?"</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="question">
+        <span class="q-number">02</span>
+        <div class="q-right">
+          <h3 class="q-title">Who feels it, and how badly?</h3>
+          <p class="q-body">One person having a bad day is different from a hundred people losing an hour every week. Both can be worth fixing — but not with the same time and effort.</p>
+          <div class="q-prompt"><span class="q-prompt-dot"></span>Name the person · How often · What it costs them</div>
+        </div>
+      </div>
+
+      <div class="question">
+        <span class="q-number">03</span>
+        <div class="q-right">
+          <h3 class="q-title">What would better look like?</h3>
+          <p class="q-body">If this were fixed, what would feel different day-to-day? And is there a version of this that wouldn't need doing at all? It's also how we'll know later whether the fix has worked.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ 4: FILTER ══ -->
+<section id="s4">
+  <div class="inner">
+    <p class="s4-kicker">Choosing the right tool</p>
+    <h2 class="s4-headline">When is AI<br>the right tool?</h2>
+    <p class="s4-sub">Once the problem is clear, you can think about how to solve it. Sometimes a simple rule does the job better, faster and cheaper than AI ever could. Here's how to tell them apart.</p>
+
+    <div class="key-question-wrap">
+      <p class="key-question-label">Here's the test</p>
+      <p class="key-question">Could you write step-by-step instructions<br>that would work every single time,<br>even for the tricky cases?</p>
+      <div class="answer-row">
+        <div class="answer-card auto-card">
+          <p class="answer-tag">Yes → A simple rule will do</p>
+          <p class="answer-text">Some tasks just need a reliable rule that runs the same way every time. That's automation, not AI. Faster to build, cheaper to run, often the better choice.</p>
+        </div>
+        <div class="answer-card ai-card">
+          <p class="answer-tag">No → That's where AI shines</p>
+          <p class="answer-text">When a task involves judgment, context, or too much variation to spell out in advance, that's where AI is brilliant.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="examples">
+      <div class="example-row">
+        <span class="ex-task">Send a welcome email when someone joins the team</span>
+        <div class="ex-right"><span class="ex-note">same every time</span><span class="chip auto">Automation</span></div>
+      </div>
+      <div class="example-row">
+        <span class="ex-task">Write a welcome message that fits the person's role and team</span>
+        <div class="ex-right"><span class="ex-note">needs judgment</span><span class="chip ai">AI</span></div>
+      </div>
+      <div class="example-row divider"></div>
+      <div class="example-row">
+        <span class="ex-task">Move a support ticket tagged "billing" to the billing queue</span>
+        <div class="ex-right"><span class="ex-note">same every time</span><span class="chip auto">Automation</span></div>
+      </div>
+      <div class="example-row">
+        <span class="ex-task">Spot that an angry customer needs a human to step in, fast</span>
+        <div class="ex-right"><span class="ex-note">needs judgment</span><span class="chip ai">AI</span></div>
+      </div>
+      <div class="example-row divider"></div>
+      <div class="example-row">
+        <span class="ex-task">Send a weekly report to the team every Monday at 9am</span>
+        <div class="ex-right"><span class="ex-note">same every time</span><span class="chip auto">Automation</span></div>
+      </div>
+      <div class="example-row">
+        <span class="ex-task">Read that report and flag what actually needs attention this week</span>
+        <div class="ex-right"><span class="ex-note">needs judgment</span><span class="chip ai">AI</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ 5: TEMPLATE ══ -->
+<section id="s5">
+  <div class="inner-sm">
+    <p class="s5-kicker">Take this with you</p>
+    <h2 class="s5-headline">How to describe<br>what you need.</h2>
+
+    <div class="template-wrap">
+      <div class="prompt-block">
+        <div>
+          <p class="prompt-q">Who's affected?</p>
+          <p class="prompt-a">Our sales team.</p>
+        </div>
+        <div>
+          <p class="prompt-q">What's going wrong?</p>
+          <p class="prompt-a">They spend two hours before every pitch pulling info from four different systems, and still walk in unprepared half the time.</p>
+        </div>
+        <div>
+          <p class="prompt-q">What would fixed look like?</p>
+          <p class="prompt-a">Less prep time, no more chasing each other for the same documents every week.</p>
+        </div>
+      </div>
+    </div>
+
+    <p class="s5-cta"><strong>Once you can answer those three</strong>, the conversation gets a lot more useful, whether that's with us, your team, or just yourself working it out on paper.</p>
+  </div>
+</section>
+
+
+<!-- ══ 6: CLOSE ══ -->
+<section id="s6">
+  <div class="s6-inner">
+    <p class="s6-kicker">The takeaway</p>
+    <h2 class="s6-headline">The best AI projects<br>don't start <em>with</em> AI.</h2>
+    <div class="s6-divider"></div>
+    <p class="s6-sub">They start with someone saying what's going wrong, who it affects, and what better would look like. Sometimes better means doing the same thing faster. Sometimes it means doing things that weren't possible before.</p>
+    <p class="s6-final">Start with the problem.<br>Everything else follows.</p>
+  </div>
+</section>
+
+
+<script>
+const secs = [...document.querySelectorAll('section')];
+const dots = [...document.querySelectorAll('.dot')];
+const bar  = document.getElementById('bar');
+
+function tick() {
+  const sy = window.scrollY;
+  const dh = document.documentElement.scrollHeight - innerHeight;
+  bar.style.width = (dh > 0 ? sy / dh * 100 : 0) + '%';
+  let cur = 0;
+  secs.forEach((s,i) => { if (s.getBoundingClientRect().top <= innerHeight * .4) cur = i; });
+  dots.forEach((d,i) => d.classList.toggle('on', i === cur));
+}
+
+dots.forEach(d => d.addEventListener('click', () => secs[+d.dataset.i].scrollIntoView({behavior:'smooth'})));
+
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.querySelectorAll('.s1-quote, .question').forEach((el, i) =>
+      setTimeout(() => el.classList.add('in'), i * 100)
+    );
+  });
+}, { threshold: 0.15 });
+
+secs.forEach(s => io.observe(s));
+window.addEventListener('scroll', tick, {passive:true});
+tick();
+</script>
+</body>
+</html>
